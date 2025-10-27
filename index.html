@@ -29,21 +29,29 @@
   #feedback{min-height:2.2em; font-size:22px; font-weight:800}
   #progress{font-size:18px; color:#555}
   #cheeses{ position:fixed; top:12px; right:14px; font-size:40px; text-shadow:0 2px 6px rgba(0,0,0,.25) }
+  #lives{ position:fixed; top:12px; left:14px; font-size:28px; background:rgba(255,255,255,.85);
+          padding:6px 12px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,.2) }
   @keyframes glow{0%{filter:brightness(.78)}100%{filter:brightness(1)}}
   img.endpic{width:min(1080px,94vw); border-radius:20px; box-shadow:0 14px 34px rgba(0,0,0,.28)}
 </style>
 </head>
 <body>
-<img id="bg" src="https://kicsicsikar.github.io/Egeres_Haromszobas_Jatek.html/mouse-9484204_1280.webp" alt="Egerek háttér">
+<!-- Háttér -->
+<img id="bg" alt="háttér">
+
+<!-- indikátorok -->
+<div id="lives">Életek: ❤️❤️❤️</div>
 <div id="cheeses">🧀🧀🧀</div>
 
 <div class="wrap">
+  <!-- START -->
   <div id="start" class="panel">
     <h1>Miért nézik vágyakozva az egerek a Holdat?</h1>
     <p class="muted">Teljesítsd mindhárom szobát (szorzás, bennfoglalás, nyitott mondatok), gyűjts 3 sajtot – és kiderül a titok! 🧀</p>
     <button class="btn" id="startBtn">Indulás</button>
   </div>
 
+  <!-- GAME -->
   <div id="game" class="panel" style="display:none">
     <h2 id="roomTitle"></h2>
     <div id="q">—</div>
@@ -54,10 +62,11 @@
     <div id="progress" class="muted"></div>
   </div>
 
+  <!-- END -->
   <div id="end" class="panel" style="display:none">
     <h2>Megszerezted az összes sajtot! 🧀🌕</h2>
     <p style="font-size:22px">Most már tudod: <strong>a Hold sajtból van!</strong></p>
-    <img class="endpic" src="https://kicsicsikar.github.io/Egeres_Haromszobas_Jatek.html/d9c95b55-7fff-4abb-8416-8278889d917a.jpg" alt="Egerek a Holdnál">
+    <img id="endPic" class="endpic" alt="Egerek a Holdnál">
     <div style="height:14px"></div>
     <audio id="song" src="https://kicsicsikar.github.io/Egeres_Haromszobas_Jatek.html/sajtb%C3%B3l_van_a_hold.mp3"></audio>
     <div style="height:14px"></div>
@@ -67,13 +76,37 @@
 
 <!-- SCRIPT A LEG-VÉGÉN -->
 <script>
-console.log("Játék betöltve");
+/* --------- segéd: kép betöltése fallbackkel --------- */
+function loadWithFallback(imgElOrSetter, urls){
+  let i = 0;
+  const tryOne = () => {
+    const u = urls[i++];
+    if(!u){ return; }
+    const test = new Image();
+    test.onload = () => {
+      if (typeof imgElOrSetter === "function") { imgElOrSetter(u); }
+      else { imgElOrSetter.src = u; }
+    };
+    test.onerror = tryOne;
+    test.src = u;
+  };
+  tryOne();
+}
 
+/* --------- alapadatok --------- */
 const BASE = "https://kicsicsikar.github.io/Egeres_Haromszobas_Jatek.html/";
-const BG1    = BASE + "mouse-9484204_1280.webp";
-const BG2    = BASE + "5918.jpg";
-const BG3    = BASE + "4900.jpg";
-const END_BG = BASE + "d9c95b55-7fff-4abb-8416-8278889d917a.jpg";
+
+/* háttérképek szobánként */
+const BG1 = [ BASE+"mouse-9484204_1280.webp" ];
+const BG2 = [ BASE+"5918.jpg" ];
+const BG3 = [ BASE+"4900.jpg" ];
+
+/* befejező kép – több névvel, hogy biztosan találjon működőt */
+const END_PICS = [
+  BASE+"d9c95b55-7fff-4abb-8416-8278889d917a.jpg",
+  BASE+"966f1a08-bbe8-490f-9151-5d38fbe23e91.jpg",
+  BASE+"31172763_2393637_7f6e5cc5cc5fbeaf1f4c7ddd5403128b_wm.jpg"
+];
 
 const rooms = [
   { name:"1. szoba – Szorzás", bg:BG1, tasks:[
@@ -91,19 +124,24 @@ const rooms = [
   ]}
 ];
 
-const $ = s => document.getElementById(s);
+/* --------- UI --------- */
+const $ = id => document.getElementById(id);
 const UI = {
   start: $("start"), game: $("game"), end: $("end"),
   roomTitle: $("roomTitle"), q: $("q"), a: $("a"),
   feedback: $("feedback"), progress: $("progress"),
   song: $("song"), bg: $("bg"), cheeses: $("cheeses"),
-  startBtn: $("startBtn"), checkBtn: $("checkBtn"), againBtn: $("againBtn")
+  startBtn: $("startBtn"), checkBtn: $("checkBtn"), againBtn: $("againBtn"),
+  lives: $("lives"), endPic: $("endPic")
 };
 
-let roomIndex=0, taskIndex=0, cheese=0;
+/* --------- állapot --------- */
+let roomIndex=0, taskIndex=0, cheese=0, lives=3;
 
-function setBg(src){ UI.bg.src = src; }
+/* --------- segédfüggvények --------- */
+function setBgCandidates(cands){ loadWithFallback(src => UI.bg.src = src, cands); }
 function updateCheese(){ UI.cheeses.textContent = "🧀".repeat(cheese) + "🧀".repeat(3-cheese); }
+function updateLives(){ UI.lives.textContent = "Életek: " + "❤️".repeat(lives); }
 
 function render(){
   const R = rooms[roomIndex];
@@ -114,14 +152,22 @@ function render(){
   UI.progress.textContent = `Feladat: ${taskIndex+1}/10 · Szoba: ${roomIndex+1}/3`;
 }
 
+/* --------- játékmenet --------- */
 function startGame(){
-  console.log("startGame()");
   UI.start.style.display = "none";
   UI.game.style.display = "block";
-  roomIndex = 0; taskIndex = 0; cheese = 0;
-  updateCheese();
-  setBg(rooms[roomIndex].bg);
+  roomIndex = 0; taskIndex = 0; cheese = 0; lives = 3;
+  updateCheese(); updateLives();
+  setBgCandidates(rooms[roomIndex].bg);
   render();
+}
+
+function wrong(){
+  lives--; updateLives();
+  if(lives<=0){
+    alert("Elfogytak az életek. Kezdjük elölről!");
+    location.reload();
+  }
 }
 
 function check(){
@@ -132,39 +178,42 @@ function check(){
     UI.feedback.textContent = "✅ Helyes!";
     taskIndex++;
     if(taskIndex < R.tasks.length){
-      setTimeout(render, 350);
+      setTimeout(render, 300);
     } else {
       cheese++; updateCheese();
       if(roomIndex < rooms.length-1){
         alert(`Megszereztél egy sajtot! (${cheese}/3)`);
-        roomIndex++; taskIndex=0; setBg(rooms[roomIndex].bg); render();
+        roomIndex++; taskIndex=0;
+        setBgCandidates(rooms[roomIndex].bg);
+        render();
       } else {
         finishGame();
       }
     }
   } else {
     UI.feedback.textContent = "❌ Próbáld újra!";
+    wrong();
   }
 }
 
 function finishGame(){
   UI.game.style.display = "none";
   UI.end.style.display = "block";
-  setBg(END_BG);
-  UI.bg.style.animation = "glow 6s ease-in-out infinite alternate";
+  /* háttér és kép fallbackkel */
+  loadWithFallback(src => { UI.bg.src = src; UI.bg.style.animation = "glow 6s ease-in-out infinite alternate"; }, END_PICS);
+  loadWithFallback(UI.endPic, END_PICS);
   try{ UI.song.currentTime = 0; UI.song.play().catch(()=>{}); }catch(e){}
 }
 
 function resetGame(){ location.reload(); }
 
-/* >>> ESEMÉNYEK KÖTÉSE A GOMBOKHOZ <<< */
+/* --------- események --------- */
 UI.startBtn.addEventListener("click", startGame);
 UI.checkBtn.addEventListener("click", check);
 UI.againBtn.addEventListener("click", resetGame);
 
-/* induló háttér */
-setBg(BG1);
-console.log("Készen áll – katt a 'Indulás'-ra!");
+/* induló háttér az 1. szobáé */
+setBgCandidates(BG1);
 </script>
 </body>
 </html>
