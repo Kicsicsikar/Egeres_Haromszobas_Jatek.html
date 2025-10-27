@@ -8,36 +8,24 @@
   :root{ --ink:#2b2100; --muted:#5b6170; --accent:#ffd54f; }
   *{box-sizing:border-box}
   html,body{height:100%}
-  body{
-    margin:0; font-family:"Comic Sans MS", system-ui, Segoe UI, Roboto, Arial, sans-serif;
-    color:var(--ink); background:#000; text-align:center; overflow-x:hidden;
-  }
+  body{ margin:0; font-family:"Comic Sans MS", system-ui, Segoe UI, Roboto, Arial, sans-serif;
+        color:var(--ink); background:#000; text-align:center; overflow-x:hidden; }
   #bg{ position:fixed; inset:0; width:100%; height:100%;
        object-fit:cover; object-position:center; z-index:-1; filter:brightness(.92); }
   .wrap{min-height:100vh; display:grid; place-items:center; padding:20px}
-  .panel{
-    width:min(1000px,96vw);
-    background:rgba(255,255,255,.95);
-    border:1px solid #ececf3; border-radius:26px;
-    box-shadow:0 18px 48px rgba(0,0,0,.2);
-    padding:28px 32px;
-  }
+  .panel{ width:min(1000px,96vw); background:rgba(255,255,255,.95);
+          border:1px solid #ececf3; border-radius:26px; box-shadow:0 18px 48px rgba(0,0,0,.2);
+          padding:28px 32px; }
   h1{margin:0 0 10px; font-size:42px; line-height:1.2}
   h2{margin:8px 0 20px; font-size:34px}
   #q{font-size:64px; font-weight:900; letter-spacing:.5px; margin:14px 0 16px}
   .muted{color:var(--muted); font-size:18px}
-  .btn{
-    border:none; border-radius:16px; padding:18px 28px;
-    background:var(--accent); color:#2b2100; font-weight:800; font-size:28px;
-    cursor:pointer; box-shadow:0 6px 14px rgba(0,0,0,.22); transition:transform .08s;
-  }
+  .btn{ border:none; border-radius:16px; padding:18px 28px; background:var(--accent);
+        color:#2b2100; font-weight:800; font-size:28px; cursor:pointer;
+        box-shadow:0 6px 14px rgba(0,0,0,.22); transition:transform .08s; }
   .btn:active{transform:scale(.98)}
-  input[type="text"]{
-    width:min(520px,86vw); height:84px;
-    border-radius:14px; border:2px solid #c9b46a;
-    font-size:42px; text-align:center; color:#1b1400; background:#fff;
-    box-shadow:inset 0 2px 8px rgba(0,0,0,.1);
-  }
+  input[type="text"]{ width:min(520px,86vw); height:84px; border-radius:14px; border:2px solid #c9b46a;
+        font-size:42px; text-align:center; color:#1b1400; background:#fff; box-shadow:inset 0 2px 8px rgba(0,0,0,.1); }
   #feedback{min-height:2.2em; font-size:22px; font-weight:800}
   #progress{font-size:18px; color:#555}
   #cheeses{ position:fixed; top:12px; right:14px; font-size:40px; text-shadow:0 2px 6px rgba(0,0,0,.25) }
@@ -46,156 +34,137 @@
 </style>
 </head>
 <body>
-<!-- Háttér -->
-<img id="bg"
-     src="https://kicsicsikar.github.io/Egeres_Haromszobas_Jatek.html/mouse-9484204_1280.webp"
-     alt="Egerek háttér">
-
+<img id="bg" src="https://kicsicsikar.github.io/Egeres_Haromszobas_Jatek.html/mouse-9484204_1280.webp" alt="Egerek háttér">
 <div id="cheeses">🧀🧀🧀</div>
 
 <div class="wrap">
-  <!-- START -->
   <div id="start" class="panel">
     <h1>Miért nézik vágyakozva az egerek a Holdat?</h1>
     <p class="muted">Teljesítsd mindhárom szobát (szorzás, bennfoglalás, nyitott mondatok), gyűjts 3 sajtot – és kiderül a titok! 🧀</p>
-    <button class="btn" id="startBtn" onclick="startGame()">Indulás</button>
+    <button class="btn" id="startBtn">Indulás</button>
   </div>
 
-  <!-- GAME -->
   <div id="game" class="panel" style="display:none">
     <h2 id="roomTitle"></h2>
     <div id="q">—</div>
     <input id="a" type="text" inputmode="numeric" autocomplete="off" aria-label="Válasz mező">
     <div style="height:16px"></div>
-    <button class="btn" id="checkBtn" onclick="check()">Ellenőrzés</button>
+    <button class="btn" id="checkBtn">Ellenőrzés</button>
     <div id="feedback" class="muted"></div>
     <div id="progress" class="muted"></div>
   </div>
 
-  <!-- END -->
   <div id="end" class="panel" style="display:none">
     <h2>Megszerezted az összes sajtot! 🧀🌕</h2>
     <p style="font-size:22px">Most már tudod: <strong>a Hold sajtból van!</strong></p>
-    <img class="endpic"
-         src="https://kicsicsikar.github.io/Egeres_Haromszobas_Jatek.html/d9c95b55-7fff-4abb-8416-8278889d917a.jpg"
-         alt="Egerek a Holdnál">
+    <img class="endpic" src="https://kicsicsikar.github.io/Egeres_Haromszobas_Jatek.html/d9c95b55-7fff-4abb-8416-8278889d917a.jpg" alt="Egerek a Holdnál">
     <div style="height:14px"></div>
-    <audio id="song"
-           src="https://kicsicsikar.github.io/Egeres_Haromszobas_Jatek.html/sajtb%C3%B3l_van_a_hold.mp3"></audio>
+    <audio id="song" src="https://kicsicsikar.github.io/Egeres_Haromszobas_Jatek.html/sajtb%C3%B3l_van_a_hold.mp3"></audio>
     <div style="height:14px"></div>
-    <button class="btn" id="againBtn" onclick="resetGame()">Újrakezdem</button>
+    <button class="btn" id="againBtn">Újrakezdem</button>
   </div>
 </div>
 
+<!-- SCRIPT A LEG-VÉGÉN -->
 <script>
-/* A teljes kód csak a DOM elkészülte után fut le. */
-document.addEventListener('DOMContentLoaded', () => {
-  const BASE = "https://kicsicsikar.github.io/Egeres_Haromszobas_Jatek.html/";
-  const BG1    = BASE + "mouse-9484204_1280.webp";
-  const BG2    = BASE + "5918.jpg";
-  const BG3    = BASE + "4900.jpg";
-  const END_BG = BASE + "d9c95b55-7fff-4abb-8416-8278889d917a.jpg";
+console.log("Játék betöltve");
 
-  const rooms = [
-    { name:"1. szoba – Szorzás", bg:BG1, tasks:[
-      ["2×3","6"],["4×2","8"],["5×4","20"],["6×3","18"],["9×4","36"],
-      ["8×5","40"],["10×4","40"],["3×7","21"],["4×6","24"],["7×4","28"]
-    ]},
-    { name:"2. szoba – Bennfoglalás", bg:BG2, tasks:[
-      ["8÷2","4"],["12÷4","3"],["16÷4","4"],["20÷5","4"],["28÷7","4"],
-      ["30÷6","5"],["36÷9","4"],["18÷3","6"],["40÷8","5"],["24÷6","4"]
-    ]},
-    { name:"3. szoba – Nyitott mondatok", bg:BG3, tasks:[
-      ["4×_ = 16","4"],["_×3 = 9","3"],["5×_ = 25","5"],["_÷4 = 2","8"],
-      ["_×2 = 10","5"],["12÷_ = 3","4"],["_×6 = 18","3"],["24÷_ = 4","6"],
-      ["3×_ = 15","5"],["_÷2 = 5","10"]
-    ]}
-  ];
+const BASE = "https://kicsicsikar.github.io/Egeres_Haromszobas_Jatek.html/";
+const BG1    = BASE + "mouse-9484204_1280.webp";
+const BG2    = BASE + "5918.jpg";
+const BG3    = BASE + "4900.jpg";
+const END_BG = BASE + "d9c95b55-7fff-4abb-8416-8278889d917a.jpg";
 
-  const $ = id => {
-    const el = document.getElementById(id);
-    if(!el){ throw new Error("Hiányzó elem: #"+id); }
-    return el;
-  };
+const rooms = [
+  { name:"1. szoba – Szorzás", bg:BG1, tasks:[
+    ["2×3","6"],["4×2","8"],["5×4","20"],["6×3","18"],["9×4","36"],
+    ["8×5","40"],["10×4","40"],["3×7","21"],["4×6","24"],["7×4","28"]
+  ]},
+  { name:"2. szoba – Bennfoglalás", bg:BG2, tasks:[
+    ["8÷2","4"],["12÷4","3"],["16÷4","4"],["20÷5","4"],["28÷7","4"],
+    ["30÷6","5"],["36÷9","4"],["18÷3","6"],["40÷8","5"],["24÷6","4"]
+  ]},
+  { name:"3. szoba – Nyitott mondatok", bg:BG3, tasks:[
+    ["4×_ = 16","4"],["_×3 = 9","3"],["5×_ = 25","5"],["_÷4 = 2","8"],
+    ["_×2 = 10","5"],["12÷_ = 3","4"],["_×6 = 18","3"],["24÷_ = 4","6"],
+    ["3×_ = 15","5"],["_÷2 = 5","10"]
+  ]}
+];
 
-  const UI = {
-    start: $("#start"),
-    game: $("#game"),
-    end: $("#end"),
-    roomTitle: $("#roomTitle"),
-    q: $("#q"),
-    a: $("#a"),
-    feedback: $("#feedback"),
-    progress: $("#progress"),
-    song: $("#song"),
-    bg: $("#bg"),
-    cheeses: document.getElementById("cheeses")
-  };
+const $ = s => document.getElementById(s);
+const UI = {
+  start: $("start"), game: $("game"), end: $("end"),
+  roomTitle: $("roomTitle"), q: $("q"), a: $("a"),
+  feedback: $("feedback"), progress: $("progress"),
+  song: $("song"), bg: $("bg"), cheeses: $("cheeses"),
+  startBtn: $("startBtn"), checkBtn: $("checkBtn"), againBtn: $("againBtn")
+};
 
-  let roomIndex = 0, taskIndex = 0, cheese = 0;
+let roomIndex=0, taskIndex=0, cheese=0;
 
-  function setBg(src){ UI.bg.src = src; }
-  function updateCheese(){ UI.cheeses.textContent = "🧀".repeat(cheese) + "🧀".repeat(3-cheese); }
+function setBg(src){ UI.bg.src = src; }
+function updateCheese(){ UI.cheeses.textContent = "🧀".repeat(cheese) + "🧀".repeat(3-cheese); }
 
-  function render(){
-    const R = rooms[roomIndex];
-    UI.roomTitle.textContent = R.name;
-    UI.q.textContent = R.tasks[taskIndex][0];
-    UI.a.value = ""; UI.a.focus();
-    UI.feedback.textContent = "";
-    UI.progress.textContent = `Feladat: ${taskIndex+1}/10 · Szoba: ${roomIndex+1}/3`;
-  }
+function render(){
+  const R = rooms[roomIndex];
+  UI.roomTitle.textContent = R.name;
+  UI.q.textContent = R.tasks[taskIndex][0];
+  UI.a.value = ""; UI.a.focus();
+  UI.feedback.textContent = "";
+  UI.progress.textContent = `Feladat: ${taskIndex+1}/10 · Szoba: ${roomIndex+1}/3`;
+}
 
-  function startGame(){
-    UI.start.style.display = "none";
-    UI.game.style.display = "block";
-    roomIndex = 0; taskIndex = 0; cheese = 0;
-    updateCheese();
-    setBg(rooms[roomIndex].bg);
-    render();
-  }
+function startGame(){
+  console.log("startGame()");
+  UI.start.style.display = "none";
+  UI.game.style.display = "block";
+  roomIndex = 0; taskIndex = 0; cheese = 0;
+  updateCheese();
+  setBg(rooms[roomIndex].bg);
+  render();
+}
 
-  function check(){
-    const R = rooms[roomIndex];
-    const val = UI.a.value.trim();
-    const ok  = R.tasks[taskIndex][1];
-    if(val === ok){
-      UI.feedback.textContent = "✅ Helyes!";
-      taskIndex++;
-      if(taskIndex < R.tasks.length){
-        setTimeout(render, 350);
-      } else {
-        cheese++; updateCheese();
-        if(roomIndex < rooms.length-1){
-          alert(`Megszereztél egy sajtot! (${cheese}/3)`);
-          roomIndex++; taskIndex = 0; setBg(rooms[roomIndex].bg); render();
-        } else {
-          finishGame();
-        }
-      }
+function check(){
+  const R = rooms[roomIndex];
+  const val = UI.a.value.trim();
+  const ok  = R.tasks[taskIndex][1];
+  if(val === ok){
+    UI.feedback.textContent = "✅ Helyes!";
+    taskIndex++;
+    if(taskIndex < R.tasks.length){
+      setTimeout(render, 350);
     } else {
-      UI.feedback.textContent = "❌ Próbáld újra!";
+      cheese++; updateCheese();
+      if(roomIndex < rooms.length-1){
+        alert(`Megszereztél egy sajtot! (${cheese}/3)`);
+        roomIndex++; taskIndex=0; setBg(rooms[roomIndex].bg); render();
+      } else {
+        finishGame();
+      }
     }
+  } else {
+    UI.feedback.textContent = "❌ Próbáld újra!";
   }
+}
 
-  function finishGame(){
-    UI.game.style.display = "none";
-    UI.end.style.display = "block";
-    UI.bg.src = END_BG;
-    UI.bg.style.animation = "glow 6s ease-in-out infinite alternate";
-    try{ UI.song.currentTime = 0; UI.song.play().catch(()=>{}); }catch(e){}
-  }
+function finishGame(){
+  UI.game.style.display = "none";
+  UI.end.style.display = "block";
+  setBg(END_BG);
+  UI.bg.style.animation = "glow 6s ease-in-out infinite alternate";
+  try{ UI.song.currentTime = 0; UI.song.play().catch(()=>{}); }catch(e){}
+}
 
-  function resetGame(){ location.reload(); }
+function resetGame(){ location.reload(); }
 
-  // Globálisra tesszük, mert az onclick ezt hívja:
-  window.startGame = startGame;
-  window.check = check;
-  window.resetGame = resetGame;
+/* >>> ESEMÉNYEK KÖTÉSE A GOMBOKHOZ <<< */
+UI.startBtn.addEventListener("click", startGame);
+UI.checkBtn.addEventListener("click", check);
+UI.againBtn.addEventListener("click", resetGame);
 
-  // induló háttér
-  setBg(BG1);
-});
+/* induló háttér */
+setBg(BG1);
+console.log("Készen áll – katt a 'Indulás'-ra!");
 </script>
 </body>
 </html>
