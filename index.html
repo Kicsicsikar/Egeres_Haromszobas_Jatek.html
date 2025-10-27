@@ -6,80 +6,58 @@
 <title>Miért nézik vágyakozva az egerek a Holdat?</title>
 <style>
   :root{ --ink:#2b2100; --muted:#5b6170; --accent:#ffd54f; }
-
   *{box-sizing:border-box}
   html,body{height:100%}
   body{
     margin:0; font-family:"Comic Sans MS", system-ui, Segoe UI, Roboto, Arial, sans-serif;
     color:var(--ink); background:#000; text-align:center; overflow-x:hidden;
   }
-
-  /* Stabil háttér */
-  #bg{
-    position:fixed; inset:0; width:100%; height:100%;
-    object-fit:cover; object-position:center; z-index:-1; filter:brightness(.92);
-  }
-
+  #bg{ position:fixed; inset:0; width:100%; height:100%;
+       object-fit:cover; object-position:center; z-index:-1; filter:brightness(.92); }
   .wrap{min-height:100vh; display:grid; place-items:center; padding:20px}
   .panel{
-    width:min(1000px,96vw);                  /* <<< szélesebb doboz */
+    width:min(1000px,96vw);
     background:rgba(255,255,255,.95);
     border:1px solid #ececf3; border-radius:26px;
     box-shadow:0 18px 48px rgba(0,0,0,.2);
     padding:28px 32px;
   }
-
-  h1{margin:0 0 10px; font-size:42px; line-height:1.2}   /* <<< nagyobb cím */
+  h1{margin:0 0 10px; font-size:42px; line-height:1.2}
   h2{margin:8px 0 20px; font-size:34px}
-
-  #q{font-size:64px; font-weight:900; letter-spacing:.5px; margin:14px 0 16px} /* <<< nagy kérdés */
-
+  #q{font-size:64px; font-weight:900; letter-spacing:.5px; margin:14px 0 16px}
   .muted{color:var(--muted); font-size:18px}
-
   .btn{
-    border:none; border-radius:16px; padding:18px 28px;   /* <<< nagyobb gomb */
+    border:none; border-radius:16px; padding:18px 28px;
     background:var(--accent); color:#2b2100; font-weight:800; font-size:28px;
     cursor:pointer; box-shadow:0 6px 14px rgba(0,0,0,.22); transition:transform .08s;
   }
   .btn:active{transform:scale(.98)}
-
   input[type="text"]{
-    width:min(520px,86vw); height:84px;                  /* <<< nagyobb mező */
+    width:min(520px,86vw); height:84px;
     border-radius:14px; border:2px solid #c9b46a;
     font-size:42px; text-align:center; color:#1b1400; background:#fff;
     box-shadow:inset 0 2px 8px rgba(0,0,0,.1);
   }
-
   #feedback{min-height:2.2em; font-size:22px; font-weight:800}
   #progress{font-size:18px; color:#555}
-
-  #cheeses{
-    position:fixed; top:12px; right:14px; font-size:40px;   /* <<< nagyobb ikonok */
-    text-shadow:0 2px 6px rgba(0,0,0,.25)
-  }
-
+  #cheeses{ position:fixed; top:12px; right:14px; font-size:40px; text-shadow:0 2px 6px rgba(0,0,0,.25) }
   @keyframes glow{0%{filter:brightness(.78)}100%{filter:brightness(1)}}
   img.endpic{width:min(1080px,94vw); border-radius:20px; box-shadow:0 14px 34px rgba(0,0,0,.28)}
 </style>
 </head>
 <body>
-
-<!-- Háttér (1. szoba képe) -->
 <img id="bg"
      src="https://kicsicsikar.github.io/Egeres_Haromszobas_Jatek.html/mouse-9484204_1280.webp"
      alt="Egerek háttér">
-
 <div id="cheeses">🧀🧀🧀</div>
 
 <div class="wrap">
-  <!-- START -->
   <div id="start" class="panel">
     <h1>Miért nézik vágyakozva az egerek a Holdat?</h1>
     <p class="muted">Teljesítsd mindhárom szobát (szorzás, bennfoglalás, nyitott mondatok), gyűjts 3 sajtot – és kiderül a titok! 🧀</p>
     <button class="btn" id="startBtn">Indulás</button>
   </div>
 
-  <!-- GAME -->
   <div id="game" class="panel" style="display:none">
     <h2 id="roomTitle"></h2>
     <div id="q">—</div>
@@ -90,7 +68,6 @@
     <div id="progress" class="muted"></div>
   </div>
 
-  <!-- END -->
   <div id="end" class="panel" style="display:none">
     <h2>Megszerezted az összes sajtot! 🧀🌕</h2>
     <p style="font-size:22px">Most már tudod: <strong>a Hold sajtból van!</strong></p>
@@ -106,11 +83,10 @@
 </div>
 
 <script>
-/* ----- Teljes URL-ek a TE repódhoz ----- */
 const BASE = "https://kicsicsikar.github.io/Egeres_Haromszobas_Jatek.html/";
-const BG1    = BASE + "mouse-9484204_1280.webp";     // 1. szoba – barlang
-const BG2    = BASE + "5918.jpg";                    // 2. szoba – cuki egér
-const BG3    = BASE + "4900.jpg";                    // 3. szoba – lámpás egér
+const BG1    = BASE + "mouse-9484204_1280.webp";
+const BG2    = BASE + "5918.jpg";
+const BG3    = BASE + "4900.jpg";
 const END_BG = BASE + "d9c95b55-7fff-4abb-8416-8278889d917a.jpg";
 
 const rooms = [
