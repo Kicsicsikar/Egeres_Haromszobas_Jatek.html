@@ -21,7 +21,6 @@
     color:var(--ink);
   }
 
-  /* Központi színpad – nagyobb */
   .stage{
     width:min(2000px,95vw);
     max-height:94vh;
@@ -37,7 +36,6 @@
     overflow:hidden;
   }
 
-  /* státusz sor */
   .statusbar{
     display:flex;
     justify-content:space-between;
@@ -51,7 +49,6 @@
   #lives{font-size:36px;}
   #cheeses{font-size:48px;}
 
-  /* kétoszlopos elrendezés – nagyobb arányok */
   .content{
     display:grid;
     grid-template-columns:60% 40%;
@@ -59,7 +56,6 @@
     height:100%;
   }
 
-  /* BAL oldali kép */
   .scene{
     position:relative;
     height:100%;
@@ -69,7 +65,6 @@
     box-shadow:inset 0 0 0 2px #e6e9f2;
   }
 
-  /* JOBB oldali panelek */
   .panel{
     height:100%;
     background:#fff;
@@ -85,50 +80,31 @@
   h2{margin:10px 0 24px;font-size:52px}
   .muted{color:var(--muted);font-size:34px}
 
-  /* Kvíz */
-  #q{
-    font-size:78px;
-    font-weight:900;
-    letter-spacing:1px;
-    margin:18px 0;
-  }
+  #q{font-size:78px;font-weight:900;letter-spacing:1px;margin:18px 0;}
   input[type="text"]{
-    width:100%;
-    height:130px;
-    border-radius:20px;
-    border:4px solid #c9b46a;
-    font-size:60px;
-    text-align:center;
-    color:#1b1400;
-    background:#fff;
+    width:100%;height:130px;border-radius:20px;border:4px solid #c9b46a;
+    font-size:60px;text-align:center;color:#1b1400;background:#fff;
     box-shadow:inset 0 3px 10px rgba(0,0,0,.1);
   }
   .btn{
-    border:none;
-    border-radius:20px;
-    padding:28px 42px;
-    background:var(--accent);
-    color:#2b2100;
-    font-weight:800;
-    font-size:48px;
-    cursor:pointer;
-    box-shadow:0 10px 22px rgba(0,0,0,.25);
-    transition:transform .08s;
+    border:none;border-radius:20px;padding:28px 42px;background:var(--accent);
+    color:#2b2100;font-weight:800;font-size:48px;cursor:pointer;
+    box-shadow:0 10px 22px rgba(0,0,0,.25);transition:transform .08s;
   }
   .btn:active{transform:scale(.98)}
 
   #feedback{min-height:2.2em;font-size:38px;font-weight:800}
   #progress{font-size:30px;color:#555;margin-top:6px}
 
-  /* Gratuláció */
   .congrats{font-size:64px;margin:0 0 14px;text-align:center}
-  img.endpic{
-    width:100%;
-    border-radius:20px;
-    box-shadow:0 12px 30px rgba(0,0,0,.25);
-  }
-
+  img.endpic{width:100%;border-radius:20px;box-shadow:0 12px 30px rgba(0,0,0,.25)}
   #confetti{position:absolute;inset:0;z-index:5;pointer-events:none;}
+  .credits{
+    text-align:center;
+    font-size:28px;
+    color:#999;
+    margin-top:50px;
+  }
 
   @media (max-width: 940px){
     .content{grid-template-columns:1fr;grid-auto-rows:minmax(280px,46vh) auto;}
@@ -153,8 +129,12 @@
     <div class="panel center-panel" id="start">
       <div>
         <h1>Készen állsz?</h1>
-        <p class="muted">Teljesítsd mind a 3 szobát (szorzás, bennfoglalás, nyitott mondatok), gyűjts 3 sajtot – és kiderül a titok! 🧀</p>
+        <p class="muted">
+          Teljesítsd mind a 3 szobát (szorzás, bennfoglalás, nyitott mondatok),
+          gyűjts 3 sajtot – és kiderül a titok! 🧀
+        </p>
         <button class="btn" id="startBtn">Indulás</button>
+        <p class="credits">készítette: Lukács Judit</p>
       </div>
     </div>
 
