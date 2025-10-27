@@ -59,7 +59,7 @@
   .scene{
     position:relative;
     height:100%;
-    background:#ddd url() center/cover no-repeat;
+    background:#ddd center/cover no-repeat;
     border:20px solid var(--frame);
     border-radius:22px;
     box-shadow:inset 0 0 0 2px #e6e9f2;
@@ -165,7 +165,42 @@
 </div>
 
 <script>
-/* ... (a játékmenet kódja változatlanul marad) ... */
+const BASE="https://kicsicsikar.github.io/Egeres_Haromszobas_Jatek.html/";
+const BG1=[BASE+"mouse-9484204_1280.webp"];
+const BG2=[BASE+"4900.jpg"];
+const BG3=[BASE+"31172763_2393637_7f6e5cc5cc5fbeaf1f4c7ddd5403128b_wm.jpg"];
+const END_PICS=[BASE+"d9c95b55-7ff7-4abb-8416-8278889d917a.jpg"];
+
+const rooms=[
+  {name:"1. szoba – Szorzás",bg:BG1,tasks:[["2×3","6"],["4×2","8"],["5×4","20"],["6×3","18"],["9×4","36"],["8×5","40"],["10×4","40"],["3×7","21"],["4×6","24"],["7×4","28"]]},
+  {name:"2. szoba – Bennfoglalás",bg:BG2,tasks:[["8÷2","4"],["12÷4","3"],["16÷4","4"],["20÷5","4"],["28÷7","4"],["30÷6","5"],["36÷9","4"],["18÷3","6"],["40÷8","5"],["24÷6","4"]]},
+  {name:"3. szoba – Nyitott mondatok",bg:BG3,tasks:[["4×_ = 16","4"],["_×3 = 9","3"],["5×_ = 25","5"],["_÷4 = 2","8"],["_×2 = 10","5"],["12÷_ = 3","4"],["_×6 = 18","3"],["24÷_ = 4","6"],["3×_ = 15","5"],["_÷2 = 5","10"]]}
+];
+
+const $=id=>document.getElementById(id);
+const UI={start:$("start"),game:$("game"),end:$("end"),roomTitle:$("roomTitle"),q:$("q"),a:$("a"),feedback:$("feedback"),progress:$("progress"),song:$("song"),scene:$("scene"),startBtn:$("startBtn"),checkBtn:$("checkBtn"),againBtn:$("againBtn"),lives:$("lives"),cheeses:$("cheeses"),endPic:$("endPic")};
+
+let roomIndex=0,taskIndex=0,cheese=0,lives=3;
+
+function setScene(cands){UI.scene.style.backgroundImage=`url('${cands[0]}')`;}
+function updateCheese(){UI.cheeses.textContent="🧀".repeat(cheese)+"🧀".repeat(3-cheese);}
+function updateLives(){UI.lives.textContent="Életek: "+"❤️".repeat(lives);}
+function render(){const R=rooms[roomIndex];UI.roomTitle.textContent=R.name;UI.q.textContent=R.tasks[taskIndex][0];UI.a.value="";UI.feedback.textContent="";UI.progress.textContent=`Feladat: ${taskIndex+1}/10 · Szoba: ${roomIndex+1}/3`;UI.a.focus();}
+function startGame(){UI.start.style.display="none";UI.game.style.display="block";roomIndex=0;taskIndex=0;cheese=0;lives=3;updateCheese();updateLives();setScene(rooms[roomIndex].bg);render();}
+function wrong(){lives--;updateLives();if(lives<=0){alert("Elfogytak az életek. Kezdjük elölről!");location.reload();}}
+function check(){const R=rooms[roomIndex];const val=UI.a.value.trim();const ok=R.tasks[taskIndex][1];
+  if(val===ok){UI.feedback.textContent="✅ Helyes!";taskIndex++;
+    if(taskIndex<R.tasks.length){setTimeout(render,400);}else{cheese++;updateCheese();
+      if(roomIndex<rooms.length-1){alert(`Megszereztél egy sajtot! (${cheese}/3)`);roomIndex++;taskIndex=0;setScene(rooms[roomIndex].bg);render();}
+      else{finishGame();}}}
+  else{UI.feedback.textContent="❌ Próbáld újra!";wrong();}
+}
+function finishGame(){UI.game.style.display="none";UI.end.style.display="block";UI.endPic.src=END_PICS[0];try{UI.song.currentTime=0;UI.song.play();}catch(e){}}
+function resetGame(){location.reload();}
+UI.startBtn.addEventListener("click",startGame);
+UI.checkBtn.addEventListener("click",check);
+UI.againBtn.addEventListener("click",resetGame);
+setScene(BG1);
 </script>
 </body>
 </html>
