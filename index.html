@@ -12,32 +12,62 @@
         color:var(--ink); background:#000; text-align:center; overflow-x:hidden; }
   #bg{ position:fixed; inset:0; width:100%; height:100%;
        object-fit:cover; object-position:center; z-index:-1; filter:brightness(.92); }
+
+  /* konfetti vászon a legfelső rétegként */
+  #confetti{ position:fixed; inset:0; z-index:5; pointer-events:none; }
+
   .wrap{min-height:100vh; display:grid; place-items:center; padding:20px}
-  .panel{ width:min(1000px,96vw); background:rgba(255,255,255,.95);
-          border:1px solid #ececf3; border-radius:26px; box-shadow:0 18px 48px rgba(0,0,0,.2);
-          padding:28px 32px; }
+
+  .panel{
+    background:rgba(255,255,255,.95);
+    border:1px solid #ececf3; border-radius:26px;
+    box-shadow:0 18px 48px rgba(0,0,0,.2);
+    padding:24px 28px;
+  }
+  /* START és END középre igazítva, nagyobb dobozban */
+  #start.panel, #end.panel{ width:min(1000px,96vw); }
+
+  /* >>> JÁTÉK PANEL – jobb alsó sarokban <<< */
+  #game.panel{
+    position:fixed; right:24px; bottom:24px; z-index:4;
+    width:min(560px, 92vw);
+    backdrop-filter: blur(2px);
+  }
+
   h1{margin:0 0 10px; font-size:42px; line-height:1.2}
-  h2{margin:8px 0 20px; font-size:34px}
-  #q{font-size:64px; font-weight:900; letter-spacing:.5px; margin:14px 0 16px}
+  h2{margin:8px 0 16px; font-size:34px}
+
+  #q{font-size:52px; font-weight:900; letter-spacing:.5px; margin:10px 0 10px}
   .muted{color:var(--muted); font-size:18px}
-  .btn{ border:none; border-radius:16px; padding:18px 28px; background:var(--accent);
-        color:#2b2100; font-weight:800; font-size:28px; cursor:pointer;
+  .btn{ border:none; border-radius:16px; padding:16px 24px; background:var(--accent);
+        color:#2b2100; font-weight:800; font-size:24px; cursor:pointer;
         box-shadow:0 6px 14px rgba(0,0,0,.22); transition:transform .08s; }
   .btn:active{transform:scale(.98)}
-  input[type="text"]{ width:min(520px,86vw); height:84px; border-radius:14px; border:2px solid #c9b46a;
-        font-size:42px; text-align:center; color:#1b1400; background:#fff; box-shadow:inset 0 2px 8px rgba(0,0,0,.1); }
-  #feedback{min-height:2.2em; font-size:22px; font-weight:800}
-  #progress{font-size:18px; color:#555}
+
+  input[type="text"]{
+    width:min(520px,86vw); height:78px;
+    border-radius:14px; border:2px solid #c9b46a;
+    font-size:38px; text-align:center; color:#1b1400; background:#fff;
+    box-shadow:inset 0 2px 8px rgba(0,0,0,.1);
+  }
+  #feedback{min-height:2.2em; font-size:20px; font-weight:800}
+  #progress{font-size:16px; color:#555}
+
   #cheeses{ position:fixed; top:12px; right:14px; font-size:40px; text-shadow:0 2px 6px rgba(0,0,0,.25) }
   #lives{ position:fixed; top:12px; left:14px; font-size:28px; background:rgba(255,255,255,.85);
           padding:6px 12px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,.2) }
+
   @keyframes glow{0%{filter:brightness(.78)}100%{filter:brightness(1)}}
   img.endpic{width:min(1080px,94vw); border-radius:20px; box-shadow:0 14px 34px rgba(0,0,0,.28)}
+  .congrats{font-size:44px; margin:0 0 8px}
 </style>
 </head>
 <body>
 <!-- Háttér -->
 <img id="bg" alt="háttér">
+
+<!-- Konfetti vászon -->
+<canvas id="confetti"></canvas>
 
 <!-- indikátorok -->
 <div id="lives">Életek: ❤️❤️❤️</div>
@@ -51,12 +81,12 @@
     <button class="btn" id="startBtn">Indulás</button>
   </div>
 
-  <!-- GAME -->
+  <!-- GAME (jobb alsó sarokban) -->
   <div id="game" class="panel" style="display:none">
     <h2 id="roomTitle"></h2>
     <div id="q">—</div>
     <input id="a" type="text" inputmode="numeric" autocomplete="off" aria-label="Válasz mező">
-    <div style="height:16px"></div>
+    <div style="height:12px"></div>
     <button class="btn" id="checkBtn">Ellenőrzés</button>
     <div id="feedback" class="muted"></div>
     <div id="progress" class="muted"></div>
@@ -64,8 +94,9 @@
 
   <!-- END -->
   <div id="end" class="panel" style="display:none">
-    <h2>Megszerezted az összes sajtot! 🧀🌕</h2>
-    <p style="font-size:22px">Most már tudod: <strong>a Hold sajtból van!</strong></p>
+    <h2 class="congrats">🎉 Gratulálok! 🎉</h2>
+    <p style="font-size:22px; margin:6px 0 18px">Megszerezted az összes sajtot! 🧀🌕</p>
+    <p style="font-size:20px; margin:0 0 14px">Most már tudod: <strong>a Hold sajtból van!</strong></p>
     <img id="endPic" class="endpic" alt="Egerek a Holdnál">
     <div style="height:14px"></div>
     <audio id="song" src="https://kicsicsikar.github.io/Egeres_Haromszobas_Jatek.html/sajtb%C3%B3l_van_a_hold.mp3"></audio>
@@ -76,7 +107,7 @@
 
 <!-- SCRIPT A LEG-VÉGÉN -->
 <script>
-/* --------- segéd: kép betöltése fallbackkel --------- */
+/* ---------- segéd: kép betöltése fallbackkel ---------- */
 function loadWithFallback(imgElOrSetter, urls){
   let i = 0;
   const tryOne = () => {
@@ -93,15 +124,57 @@ function loadWithFallback(imgElOrSetter, urls){
   tryOne();
 }
 
-/* --------- alapadatok --------- */
-const BASE = "https://kicsicsikar.github.io/Egeres_Haromszobas_Jatek.html/";
+/* ---------- KONFETTI ---------- */
+function confettiBurst(ms=4500){
+  const c = document.getElementById('confetti');
+  const ctx = c.getContext('2d');
+  const DPR = window.devicePixelRatio || 1;
+  function resize(){
+    c.width  = Math.floor(innerWidth*DPR);
+    c.height = Math.floor(innerHeight*DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+  resize(); window.addEventListener('resize', resize, { once:true });
 
-/* háttérképek szobánként */
+  const colors = ['#ffd54f','#ff6f61','#4fc3f7','#81c784','#ce93d8','#ffb74d'];
+  const N = 160, g = 0.18;
+  const P = Array.from({length:N}, ()=>({
+    x: Math.random()*innerWidth,
+    y: -20-Math.random()*120,
+    vx: -1+Math.random()*2,
+    vy: 1+Math.random()*3,
+    w: 6+Math.random()*10,
+    h: 10+Math.random()*14,
+    rot: Math.random()*Math.PI,
+    vr: (-0.2+Math.random()*0.4),
+    col: colors[Math.random()*colors.length|0],
+  }));
+
+  let stopAt = performance.now()+ms;
+  function tick(t){
+    ctx.clearRect(0,0,innerWidth,innerHeight);
+    P.forEach(p=>{
+      p.vy += g;
+      p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = p.col;
+      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      ctx.restore();
+      if(p.y>innerHeight+60){ p.y = -20; p.vy = 1+Math.random()*3; }
+    });
+    if(t<stopAt){ requestAnimationFrame(tick); }
+    else{ ctx.clearRect(0,0,innerWidth,innerHeight); }
+  }
+  requestAnimationFrame(tick);
+}
+
+/* ---------- alapadatok ---------- */
+const BASE = "https://kicsicsikar.github.io/Egeres_Haromszobas_Jatek.html/";
 const BG1 = [ BASE+"mouse-9484204_1280.webp" ];
 const BG2 = [ BASE+"5918.jpg" ];
 const BG3 = [ BASE+"4900.jpg" ];
-
-/* befejező kép – több névvel, hogy biztosan találjon működőt */
 const END_PICS = [
   BASE+"d9c95b55-7fff-4abb-8416-8278889d917a.jpg",
   BASE+"966f1a08-bbe8-490f-9151-5d38fbe23e91.jpg",
@@ -124,7 +197,7 @@ const rooms = [
   ]}
 ];
 
-/* --------- UI --------- */
+/* ---------- UI ---------- */
 const $ = id => document.getElementById(id);
 const UI = {
   start: $("start"), game: $("game"), end: $("end"),
@@ -135,10 +208,10 @@ const UI = {
   lives: $("lives"), endPic: $("endPic")
 };
 
-/* --------- állapot --------- */
+/* ---------- állapot ---------- */
 let roomIndex=0, taskIndex=0, cheese=0, lives=3;
 
-/* --------- segédfüggvények --------- */
+/* ---------- segédfüggvények ---------- */
 function setBgCandidates(cands){ loadWithFallback(src => UI.bg.src = src, cands); }
 function updateCheese(){ UI.cheeses.textContent = "🧀".repeat(cheese) + "🧀".repeat(3-cheese); }
 function updateLives(){ UI.lives.textContent = "Életek: " + "❤️".repeat(lives); }
@@ -152,10 +225,10 @@ function render(){
   UI.progress.textContent = `Feladat: ${taskIndex+1}/10 · Szoba: ${roomIndex+1}/3`;
 }
 
-/* --------- játékmenet --------- */
+/* ---------- játékmenet ---------- */
 function startGame(){
   UI.start.style.display = "none";
-  UI.game.style.display = "block";
+  UI.game.style.display = "block";       /* jobb-alsó sarok – CSS-ben */
   roomIndex = 0; taskIndex = 0; cheese = 0; lives = 3;
   updateCheese(); updateLives();
   setBgCandidates(rooms[roomIndex].bg);
@@ -202,12 +275,15 @@ function finishGame(){
   /* háttér és kép fallbackkel */
   loadWithFallback(src => { UI.bg.src = src; UI.bg.style.animation = "glow 6s ease-in-out infinite alternate"; }, END_PICS);
   loadWithFallback(UI.endPic, END_PICS);
+
+  /* zene + KONFETTI */
   try{ UI.song.currentTime = 0; UI.song.play().catch(()=>{}); }catch(e){}
+  confettiBurst(5000);
 }
 
 function resetGame(){ location.reload(); }
 
-/* --------- események --------- */
+/* ---------- események ---------- */
 UI.startBtn.addEventListener("click", startGame);
 UI.checkBtn.addEventListener("click", check);
 UI.againBtn.addEventListener("click", resetGame);
