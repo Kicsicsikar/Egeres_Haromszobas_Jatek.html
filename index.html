@@ -46,28 +46,33 @@
 </style>
 </head>
 <body>
+<!-- háttér -->
 <img id="bg"
      src="https://kicsicsikar.github.io/Egeres_Haromszobas_Jatek.html/mouse-9484204_1280.webp"
      alt="Egerek háttér">
 <div id="cheeses">🧀🧀🧀</div>
 
 <div class="wrap">
+  <!-- START -->
   <div id="start" class="panel">
     <h1>Miért nézik vágyakozva az egerek a Holdat?</h1>
     <p class="muted">Teljesítsd mindhárom szobát (szorzás, bennfoglalás, nyitott mondatok), gyűjts 3 sajtot – és kiderül a titok! 🧀</p>
-    <button class="btn" id="startBtn">Indulás</button>
+    <!-- KÖZVETLEN HÍVÁS: -->
+    <button class="btn" id="startBtn" onclick="startGame()">Indulás</button>
   </div>
 
+  <!-- GAME -->
   <div id="game" class="panel" style="display:none">
     <h2 id="roomTitle"></h2>
     <div id="q">—</div>
     <input id="a" type="text" inputmode="numeric" autocomplete="off" aria-label="Válasz mező">
     <div style="height:16px"></div>
-    <button class="btn" id="checkBtn">Ellenőrzés</button>
+    <button class="btn" id="checkBtn" onclick="check()">Ellenőrzés</button>
     <div id="feedback" class="muted"></div>
     <div id="progress" class="muted"></div>
   </div>
 
+  <!-- END -->
   <div id="end" class="panel" style="display:none">
     <h2>Megszerezted az összes sajtot! 🧀🌕</h2>
     <p style="font-size:22px">Most már tudod: <strong>a Hold sajtból van!</strong></p>
@@ -78,11 +83,16 @@
     <audio id="song"
            src="https://kicsicsikar.github.io/Egeres_Haromszobas_Jatek.html/sajtb%C3%B3l_van_a_hold.mp3"></audio>
     <div style="height:14px"></div>
-    <button class="btn" id="againBtn">Újrakezdem</button>
+    <button class="btn" id="againBtn" onclick="resetGame()">Újrakezdem</button>
   </div>
 </div>
 
 <script>
+/* Egyszerű hibafigyelő – ha gond van, felugróban jelzi */
+window.onerror = function(msg, src, line, col){
+  alert("JavaScript hiba: " + msg + " (sor: " + line + ")");
+};
+
 const BASE = "https://kicsicsikar.github.io/Egeres_Haromszobas_Jatek.html/";
 const BG1    = BASE + "mouse-9484204_1280.webp";
 const BG2    = BASE + "5918.jpg";
@@ -113,16 +123,8 @@ const UI = { start:$("#start"), game:$("#game"), end:$("#end"),
 
 let roomIndex=0, taskIndex=0, cheese=0;
 
-function startGame(){
-  UI.start.style.display="none";
-  UI.game.style.display="block";
-  roomIndex=0; taskIndex=0; cheese=0;
-  updateCheese();
-  setBg(rooms[roomIndex].bg);
-  render();
-}
-
 function setBg(src){ UI.bg.src = src; }
+function updateCheese(){ $("#cheeses").textContent = "🧀".repeat(cheese) + "🧀".repeat(3-cheese); }
 
 function render(){
   const R = rooms[roomIndex];
@@ -131,6 +133,15 @@ function render(){
   UI.a.value = ""; UI.a.focus();
   UI.feedback.textContent = "";
   UI.progress.textContent = `Feladat: ${taskIndex+1}/10 · Szoba: ${roomIndex+1}/3`;
+}
+
+function startGame(){
+  UI.start.style.display="none";
+  UI.game.style.display="block";
+  roomIndex=0; taskIndex=0; cheese=0;
+  updateCheese();
+  setBg(rooms[roomIndex].bg);
+  render();
 }
 
 function check(){
@@ -156,27 +167,17 @@ function check(){
   }
 }
 
-function updateCheese(){
-  $("#cheeses").textContent = "🧀".repeat(cheese) + "🧀".repeat(3-cheese);
-}
-
 function finishGame(){
   UI.game.style.display="none";
   UI.end.style.display="block";
   UI.bg.src = END_BG;
   UI.bg.style.animation = "glow 6s ease-in-out infinite alternate";
-  UI.song.currentTime = 0;
-  const tryPlay = ()=> UI.song.play().catch(()=>{});
-  tryPlay(); setTimeout(tryPlay,400); setTimeout(tryPlay,1200);
+  try{ UI.song.currentTime = 0; UI.song.play().catch(()=>{}); }catch(e){}
 }
 
-function reset(){ location.reload(); }
+function resetGame(){ location.reload(); }
 
-$("#startBtn").addEventListener("click", startGame);
-$("#checkBtn").addEventListener("click", check);
-$("#againBtn").addEventListener("click", reset);
-$("#a").addEventListener("keydown", e=>{ if(e.key==="Enter") check(); });
-
+/* induló háttér */
 setBg(BG1);
 </script>
 </body>
