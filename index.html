@@ -177,8 +177,11 @@ function finishGame(){
 
 function resetGame(){ location.reload(); }
 
-/* induló háttér */
-setBg(BG1);
+/* induló háttér CSAK akkor, ha már minden betöltött */
+window.onload = function() {
+  setBg(BG1);
+};
 </script>
 </body>
 </html>
+
